@@ -9,7 +9,7 @@
 
     <name>WhereSpirit</name>
     
-    <preference name="phonegap-version" value="3.5.0" />
+    <preference name="phonegap-version" value="3.6.3" />
 
     <description>
         Unlock your place 
