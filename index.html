@@ -3,7 +3,7 @@
 <head>
 	<title>WhereSpirit App</title>
 	
-	<script type="text/javascript" src="cordova-1.7.0.js"></script>
+<!--	<script type="text/javascript" src="cordova-1.7.0.js"></script> -->
 	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDUx_HOOmMnESX7e9-bSqVFdj19HVUqpO4&sensor=false"></script>
 	<script type="text/javascript" src="json2.js"></script>
 	<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
@@ -20,112 +20,8 @@
             margin: 0 auto;
           }
   </style>
-    <script>
-// Note: This example requires that you consent to location sharing when
-// prompted by your browser. If you see a blank space instead of the map, this
-// is probably because you have denied permission for location sharing.
-
-var map;
-
-function initialize(iconURL) {
-  var mapOptions = {
-    zoom: 17
-  };
-  map = new google.maps.Map(document.getElementById('google_map'),
-      mapOptions);
-
-  // Try HTML5 geolocation
-  if(navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var pos = new google.maps.LatLng(position.coords.latitude,
-                                       position.coords.longitude);
-
-      
-      var marker = new google.maps.Marker({
-      position: pos,
-      map: map,
-      icon: iconURL,
-      });
-      
-      map.setCenter(pos);
-    }, function() {
-      handleNoGeolocation(true);
-    });
-  } else {
-    // Browser doesn't support Geolocation
-    handleNoGeolocation(false);
-  }
-}
-
-function handleNoGeolocation(errorFlag) {
-  if (errorFlag) {
-    var content = 'Error: The Geolocation service failed.';
-  } else {
-    var content = 'Error: Your browser doesn\'t support geolocation.';
-  }
-
-  var options = {
-    map: map,
-    position: new google.maps.LatLng(60, 105),
-    content: content
-  };
-
-  var infowindow = new google.maps.InfoWindow(options);
-  map.setCenter(options.position);
-}
-
-
-    </script>
     
-    <script>
-             function makeApiCall() {
-  gapi.client.load('plus', 'v1').then(function() {
-    var request = gapi.client.plus.people.get({
-        'userId': 'me'
-          });
-    request.then(function(resp) {
-      var heading = document.createElement('h4');
-      var image = document.createElement('img');
-      image.src = resp.result.image.url;
-      console.log(JSON.stringify(resp.result));
-      initialize(resp.result.image.url);
-    }, function(reason) {
-      console.log('Error: ' + reason.result.error.message);
-    });
-  });
-}
 
-function getEmail(){
-    // Laden der oauth2-Bibliotheken, um die userinfo-Methoden zu akitvieren.
-    gapi.client.load('oauth2', 'v2', function() {
-          var request = gapi.client.oauth2.userinfo.get();
-          request.execute(getEmailCallback);
-        });
-  }
-  
-  function getEmailCallback(obj) {
-       if(obj['email'])
-            console.log(obj['email']);
-       else
-            console.log('Nix');
-  }
-             
-             function signinCallback(authResult) {
-               if (authResult['access_token']) {
-                  // Autorisierung erfolgreich
-                  // Nach der Autorisierung des Nutzers nun die Anmeldeschaltfläche ausblenden, zum Beispiel:
-                  document.getElementById('signinButton').setAttribute('style', 'display: none');
-                  makeApiCall();
-                  getEmail();
-               } else if (authResult['error']) {
-                  // Es gab einen Fehler.
-                  // Mögliche Fehlercodes:
-                  //   "access_denied" – Der Nutzer hat den Zugriff für Ihre App abgelehnt.
-                  //   "immediate_failed" – Automatische Anmeldung des Nutzers ist fehlgeschlagen.
-                  console.log('Es gab einen Fehler: ' + authResult['Fehler']);
-                }
-              }
-    </script>
 	
 </head>
 <body>
@@ -133,29 +29,49 @@ function getEmail(){
 <div data-role="page" id="home" class="ui-page" style="background-color: #F8C0DB; width: 100%; height: 100%;padding:0;position:absolute;">
 	<div data-role="content" style="background-color: #F8C0DB; width: 100%; height: 100%;padding:0;position:absolute;">
 		<div class="center-wrapper">
-      <a href="#newhome" data-role="button" data-icon="star" data-inline="true" id="checkin">Einchecken</a>
+      <button data-icon="arrow-r" data-inline="true" id="checkinButton">Über G+ anmelden</button>
       <span id="signinButton">
-        <span
-          class="g-signin"
-          data-callback="signinCallback"
-          data-clientid="1074302660216-a693sbd2ght96v6a5l4amrp91cekeuk2.apps.googleusercontent.com"
-          data-cookiepolicy="single_host_origin"
-          data-requestvisibleactions="http://schemas.google.com/AddActivity"
-          data-scope="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email"
-          data-width="iconOnly">
-        </span>
+      </span>
       </span>
     </div>
 	</div>
 </div>
 
 <div data-role="page" id="newhome" class="ui-page" data-theme="a">
+		<div class="center-wrapper">
+	<div data-role="content" id="google_map" style="width:300px;height:300px;padding:0;margin:0 auto;">
+  </div>
+  <a href="#checkin" data-role="button" data-icon="star" data-inline="true" id="checkin">Einchecken</a>
   
-	<div data-role="content" id="google_map" style="width:100%;height:100%;padding:0;position:absolute;">
   </div>
   
 </div>
-
+<div data-role="page" id="checkin" class="ui-page" data-theme="a">
+		<div class="center-wrapper">
+	     <p>Successfully checked in</p>
+    </div>
+  
+</div>
 <!-- End of Home page -->
+    <script type="text/javascript">
+      (function() {
+       var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+       po.src = 'https://apis.google.com/js/client:platform.js?onload=render';
+       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+     })();
+     function render() {
+               gapi.signin.render(
+ 'checkinButton', {
+          'callback':'signinCallback',
+          'clientid':'1074302660216-a693sbd2ght96v6a5l4amrp91cekeuk2.apps.googleusercontent.com',
+          'cookiepolicy':'single_host_origin',
+          'requestvisibleactions':'http://schemas.google.com/AddActivity',
+          'scope':'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email',
+}
+);
+};
+   
+
+    </script>
 </body>
 </html>
